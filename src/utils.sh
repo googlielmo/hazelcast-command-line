@@ -95,6 +95,20 @@ function help_ID_PREFIX() {
 }
 
 #
+function is_EE() {
+    [ -f "$HAZELCAST_HOME/lib/hazelcast-enterprise-all-${HAZELCAST_VERSION}.jar" ]
+}
+
+#
+function find_CLASSPATH() {
+    if  is_EE ; then
+        export CLASSPATH="$HAZELCAST_HOME/lib/hazelcast-enterprise-all-${HAZELCAST_VERSION}.jar"
+    else
+        export CLASSPATH="$HAZELCAST_HOME/lib/hazelcast-all-${HAZELCAST_VERSION}.jar"
+    fi
+}
+
+#
 case "$1" in
     --help | -h)
         helper

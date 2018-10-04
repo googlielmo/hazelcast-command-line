@@ -29,6 +29,11 @@ function helper() {
     echo "  -j or --jar <path>"
     echo "        Add <path> to Hazelcast class path."
     echo
+if [ is_EE ] ; then
+    echo "  -L or --license <license key>"
+    echo "        Use specified <license key> (Hazelcast Enterprise)."
+fi
+    echo
     echo "  -p or --port <port>"
     echo "        Bind to the specified <port> (default: 5701)."
     echo
@@ -100,6 +105,14 @@ do
                 helper && exit 1
             fi
             JAVA_OPTS="${JAVA_OPTS} $2"
+            shift 2
+            ;;
+        -L | --license)
+            if [[ -z "$2" ]] ; then
+                printf "Error: missing <license key> after %s\n\n" "$1"
+                helper && exit 1
+            fi
+            JAVA_OPTS="${JAVA_OPTS} -Dhazelcast.enterprise.license.key=$2"
             shift 2
             ;;
         -c | --config)
@@ -195,7 +208,7 @@ if [ "x$MAX_HEAP_SIZE" != "x" ]; then
 	JAVA_OPTS="$JAVA_OPTS -Xmx${MAX_HEAP_SIZE}"
 fi
 
-export CLASSPATH="$HAZELCAST_HOME/lib/hazelcast-all-${HAZELCAST_VERSION}.jar"
+find_CLASSPATH
 if [ ${CP} ]; then
 	CLASSPATH="${CLASSPATH}${CP}"
 fi

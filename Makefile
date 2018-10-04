@@ -5,9 +5,11 @@ DIST=build/dist
 HZ_BIN=${DIST}/bin
 HZ_ETC=${DIST}/etc
 
-.PHONY: all clean cleanall cleandist download dist package
+.PHONY: all clean cleanall cleandist download dist package ee
 
 all: download package
+
+ee: ee-download all
 
 clean: cleandist
 	# cleaning up local maven repo
@@ -38,6 +40,10 @@ dist:
 download:
 	# downloading Hazelcast artifacts
 	HAZELCAST_VERSION=${HAZELCAST_VERSION} ./dl-artifacts.sh
+
+ee-download:
+	# downloading Hazelcast artifacts
+	HAZELCAST_VERSION=${HAZELCAST_VERSION} ./ee-dl-artifacts.sh
 
 package: dist
 	# creating package
