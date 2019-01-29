@@ -87,17 +87,30 @@ function make_HID() {
 
 #
 function find_RUN_JAVA() {
-    if [ $JAVA_HOME ]
-    then
+    if [ $JAVA_HOME ] ; then
         RUN_JAVA=$JAVA_HOME/bin/java
     else
         RUN_JAVA=`which java 2>/dev/null`
     fi
 
-    if [ -z $RUN_JAVA ]
-    then
+    if [ -z $RUN_JAVA ] ; then
         echo "Error: Java not found. Please install Java 1.6 or higher in your PATH or set JAVA_HOME appropriately"
         exit 1
+    fi
+}
+
+#
+function get_JAVA_VERSION() {
+    find_RUN_JAVA
+    local version=$("${RUN_JAVA}" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+    local major=$(echo "$version" | awk -F. '{printf("%d",$1);}')
+    echo $major
+}
+
+#
+function fix_JAVA_OPTS() {
+    if [ $(get_JAVA_VERSION) -ge 9 ] ; then
+        JAVA_OPTS="$JAVA_OPTS --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
     fi
 }
 
